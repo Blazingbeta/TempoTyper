@@ -42,6 +42,10 @@ public class NoteController : MonoBehaviour {
 	[SerializeField] string testString = "Hello, World!";
 	string m_fullScript;
 
+	private int m_score = 0;
+	private int m_hitMultiplier = 0;
+	[SerializeField] TMPro.TMP_Text m_scoreText = null;
+	[SerializeField] TMPro.TMP_Text m_multiplierText = null;
 
 	List<Note> m_activeNotes; //Contains all of the notes currently moving and checking input
 	int m_currentLetter = 0;
@@ -72,14 +76,37 @@ public class NoteController : MonoBehaviour {
 			//m_activeNotes[0].m_text.textInfo.characterInfo[0].
 		}
 	}
+	void UpdateScore()
+	{
+		m_scoreText.text = "Score: " + m_score.ToString("D6");
+		m_multiplierText.text = "x" + m_hitMultiplier;
+	}
 	//Is also called when a note is scrolled off the screen
 	void HitNote(int noteIndex)
 	{
 		m_activeNotes[noteIndex].m_note.gameObject.SetActive(false);
 		float distance = Mathf.Abs(m_noteHitPosition - m_activeNotes[noteIndex].m_note.anchoredPosition.x);
-		if (distance <= m_perfectDistance) StartCoroutine(ShowHitText("Perfect", 60.0f / (m_BPM * 1.1f)));
-		else if (distance <= m_goodDistance) StartCoroutine(ShowHitText("Good", 60.0f / (m_BPM * 1.1f)));
-		else StartCoroutine(ShowHitText("Miss", 60.0f / (m_BPM * 1.1f)));
+
+		if (distance <= m_goodDistance)
+		{
+			m_hitMultiplier++;
+			m_score += (int)((m_goodDistance - distance) / 5.0f) * m_hitMultiplier;
+			UpdateScore();
+			if (distance <= m_perfectDistance)
+			{
+				StartCoroutine(ShowHitText("Perfect", 60.0f / (m_BPM * 1.1f)));
+			}
+			else
+			{
+				StartCoroutine(ShowHitText("Good", 60.0f / (m_BPM * 1.1f)));
+			}
+		}
+		else
+		{
+			m_hitMultiplier = 0;
+			UpdateScore();
+			StartCoroutine(ShowHitText("Miss", 60.0f / (m_BPM * 1.1f)));
+		}
 		m_activeNotes.RemoveAt(noteIndex);
 
 		m_highlightedLetterIndex++;
