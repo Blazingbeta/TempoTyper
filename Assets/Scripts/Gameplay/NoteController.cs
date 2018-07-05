@@ -39,7 +39,6 @@ public class NoteController : MonoBehaviour {
 	[SerializeField] TMPro.TMP_Text m_letterHighlightText = null;
 	[SerializeField] TMPro.TMP_Text m_hitText = null;
 
-	[SerializeField] string testString = "Hello, World!";
 	string m_fullScript;
 
 	private int m_score = 0;
@@ -53,9 +52,9 @@ public class NoteController : MonoBehaviour {
 	void Start ()
 	{
 		m_activeNotes = new List<Note>();
-		m_fullScript = testString.ToUpper();
-		m_fullTextDisplay.GetComponent<TMPro.TMP_Text>().text = testString;
-		m_letterHighlightText.text = testString[0].ToString();
+		m_fullScript = MainMenuController.GameString.ToUpper();
+		m_fullTextDisplay.GetComponent<TMPro.TMP_Text>().text = MainMenuController.GameString;
+		m_letterHighlightText.text = MainMenuController.GameString[0].ToString();
 		//Get the delay that the notes need to be spawned at for the bpm to line up
 		float distanceToHitmarker = 750f + m_noteHitPosition;
 		float timeOffset = distanceToHitmarker / m_noteScrollSpeed;
@@ -110,20 +109,26 @@ public class NoteController : MonoBehaviour {
 		m_activeNotes.RemoveAt(noteIndex);
 
 		m_highlightedLetterIndex++;
-		if (m_highlightedLetterIndex < testString.Length)
+		if (m_highlightedLetterIndex < MainMenuController.GameString.Length)
 		{
-			if (testString[m_highlightedLetterIndex] == ' ')
+			if (MainMenuController.GameString[m_highlightedLetterIndex] == ' ')
 			{
 				m_highlightedLetterIndex++;
 				m_fullTextDisplay.anchoredPosition += Vector2.left * (m_textSpaceDistance - m_textCharDistance);
 			}
-			m_letterHighlightText.text = testString[m_highlightedLetterIndex].ToString();
+			m_letterHighlightText.text = MainMenuController.GameString[m_highlightedLetterIndex].ToString();
 			m_fullTextDisplay.anchoredPosition += Vector2.left * m_textCharDistance;
 		}
 		else
 		{
 			m_letterHighlightText.text = "";
+			StartCoroutine(EndSong());
 		}
+	}
+	IEnumerator EndSong()
+	{
+		yield return new WaitForSeconds(4.0f);
+		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
 	}
 	int m_currentRunning = 0;
 	IEnumerator ShowHitText(string text, float duration)

@@ -27,5 +27,6 @@ public static class UtilityFunc
 		m_keycodes.Add('!', KeyCode.Alpha1);
 		m_keycodes.Add('\'', KeyCode.Quote);
 		m_keycodes.Add(' ', KeyCode.Space);
+		m_keycodes.Add('-', KeyCode.Minus);
 	}
 }
