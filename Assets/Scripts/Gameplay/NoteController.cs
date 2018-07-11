@@ -113,6 +113,7 @@ public class NoteController : MonoBehaviour {
 			m_score += (int)((m_goodDistance - distance) / 5.0f) * m_hitMultiplier;
 			UpdateScore();
 			m_particleHitFX.Play();
+			UIShake.i.Shake(0.1f);
 			if (distance <= m_perfectDistance)
 			{
 				StartCoroutine(ShowHitText("Perfect", 60.0f / (m_BPM * 1.1f)));
