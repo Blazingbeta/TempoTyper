@@ -49,6 +49,7 @@ public class NoteController : MonoBehaviour {
 
 	[SerializeField] RawImage m_hitCircle = null;
 	[SerializeField] Image m_progressMeter = null;
+	[SerializeField] ParticleSystem m_particleHitFX = null;
 	[SerializeField] AudioSource m_BGM;
 
 	private AudioSource m_hitsoundPlayer = null;
@@ -111,6 +112,7 @@ public class NoteController : MonoBehaviour {
 			m_hitMultiplier++;
 			m_score += (int)((m_goodDistance - distance) / 5.0f) * m_hitMultiplier;
 			UpdateScore();
+			m_particleHitFX.Play();
 			if (distance <= m_perfectDistance)
 			{
 				StartCoroutine(ShowHitText("Perfect", 60.0f / (m_BPM * 1.1f)));
