@@ -38,7 +38,6 @@ public class NoteController : MonoBehaviour {
 
 	[SerializeField] RectTransform m_fullTextDisplay = null;
 	[SerializeField] TMPro.TMP_Text m_letterHighlightText = null;
-	[SerializeField] TMPro.TMP_Text m_hitText = null;
 
 	string m_fullScript;
 
@@ -47,13 +46,9 @@ public class NoteController : MonoBehaviour {
 	[SerializeField] TMPro.TMP_Text m_scoreText = null;
 	[SerializeField] TMPro.TMP_Text m_multiplierText = null;
 
-	[SerializeField] RawImage m_hitCircle = null;
 	[SerializeField] Image m_progressMeter = null;
-	[SerializeField] ParticleSystem m_particleHitFX = null;
-	[SerializeField] AudioSource m_BGM;
 
-	private AudioSource m_hitsoundPlayer = null;
-	private BackgroundController m_bgController = null;
+	EffectManager m_effectManager = null;
 
 	List<Note> m_activeNotes; //Contains all of the notes currently moving and checking input
 	int m_currentLetter = 0;
@@ -62,8 +57,8 @@ public class NoteController : MonoBehaviour {
 	float m_songStartTime;
 	void Start ()
 	{
-		m_hitsoundPlayer = GetComponent<AudioSource>();
-		m_bgController = GetComponent<BackgroundController>();
+		m_effectManager = GetComponent<EffectManager>();
+		m_effectManager.Initialize(m_BPM);
 		m_activeNotes = new List<Note>();
 		m_fullScript = MainMenuController.GameString.ToUpper();
 		m_fullTextDisplay.GetComponent<TMPro.TMP_Text>().text = MainMenuController.GameString;
@@ -84,12 +79,12 @@ public class NoteController : MonoBehaviour {
 		m_activeNotes.ForEach(n => n.m_note.anchoredPosition += scrollAmount);
 		if (m_activeNotes.Count > 0 && m_activeNotes[0].IsNoteHit())
 		{
-			HitNote(0);
-			StartCoroutine(ShrinkHitIndicator());
+			HitNote(0, true);
+			//StartCoroutine(ShrinkHitIndicator());
 		}
 		else if (m_activeNotes.Count > 0 && m_activeNotes[0].m_note.anchoredPosition.x < m_noteMissPosition)
 		{
-			HitNote(0);
+			HitNote(0, false);
 			//m_activeNotes[0].m_text.textInfo.characterInfo[0].
 		}
 		UpdateProgressBar();
@@ -104,7 +99,7 @@ public class NoteController : MonoBehaviour {
 		m_multiplierText.text = "x" + m_hitMultiplier;
 	}
 	//Is also called when a note is scrolled off the screen
-	void HitNote(int noteIndex)
+	void HitNote(int noteIndex, bool wasPressed)
 	{
 		m_activeNotes[noteIndex].m_note.gameObject.SetActive(false);
 		float distance = Mathf.Abs(m_noteHitPosition - m_activeNotes[noteIndex].m_note.anchoredPosition.x);
@@ -114,24 +109,20 @@ public class NoteController : MonoBehaviour {
 			m_hitMultiplier++;
 			m_score += (int)((m_goodDistance - distance) / 5.0f) * m_hitMultiplier;
 			UpdateScore();
-			m_particleHitFX.Play();
-			UIShake.i.Shake(0.2f);
-			m_bgController.HitNote();
 			if (distance <= m_perfectDistance)
 			{
-				StartCoroutine(ShowHitText("Perfect", 60.0f / (m_BPM * 1.1f)));
+				m_effectManager.HitPerfect();
 			}
 			else
 			{
-				StartCoroutine(ShowHitText("Good", 60.0f / (m_BPM * 1.1f)));
+				m_effectManager.HitGood();
 			}
 		}
 		else
 		{
 			m_hitMultiplier = 0;
 			UpdateScore();
-			StartCoroutine(ShowHitText("Miss", 60.0f / (m_BPM * 1.1f)));
-			m_bgController.MissNote();
+			m_effectManager.MissNote(wasPressed);
 		}
 		m_activeNotes.RemoveAt(noteIndex);
 
@@ -149,38 +140,8 @@ public class NoteController : MonoBehaviour {
 		else
 		{
 			m_letterHighlightText.text = "";
-			StartCoroutine(EndSong());
+			m_effectManager.EndSong();
 		}
-	}
-	IEnumerator ShrinkHitIndicator()
-	{
-		m_hitCircle.rectTransform.sizeDelta = Vector2.one * 125;
-		m_hitsoundPlayer.Play();
-		yield return new WaitForSeconds(0.2f);
-		m_hitCircle.rectTransform.sizeDelta = Vector2.one * 150;
-	}
-	IEnumerator EndSong()
-	{
-		float timer = 3.0f;
-		while(timer > 0)
-		{
-			m_BGM.volume = timer / 3;
-			timer -= Time.deltaTime;
-			yield return null;
-		}
-		m_BGM.volume = 0;
-		yield return new WaitForSeconds(0.5f);
-		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-	}
-	int m_currentRunning = 0;
-	IEnumerator ShowHitText(string text, float duration)
-	{
-		m_currentRunning++;
-		m_hitText.text = text;
-		yield return new WaitForSeconds(duration);
-		m_currentRunning--;
-		if(m_currentRunning == 0)
-			m_hitText.text = "";
 	}
 	IEnumerator SpawnNotes(float delay, float offset)
 	{
