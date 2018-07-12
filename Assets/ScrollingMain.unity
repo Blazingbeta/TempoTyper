@@ -423,6 +423,7 @@ GameObject:
   - component: {fileID: 656047596}
   - component: {fileID: 656047599}
   - component: {fileID: 656047598}
+  - component: {fileID: 656047600}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -577,6 +578,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5bd32eabdc62934590e399ff1227a0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_baseColor: {r: 0.101960786, g: 0.2, b: 0.7411765, a: 0}
+  m_lowHealthColor: {r: 0.5943396, g: 0.20465466, b: 0.36028507, a: 0}
+  m_deadColor: {r: 0, g: 0, b: 0, a: 0}
+  m_maxSaturation: 0.3
+  m_saturationDecayTime: 0.2
+--- !u!166 &656047600
+AudioChorusFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 656047595}
+  m_Enabled: 1
+  m_DryMix: 0.5
+  m_WetMix1: 0.5
+  m_WetMix2: 0.5
+  m_WetMix3: 0.5
+  m_Delay: 40
+  m_Rate: 0.8
+  m_Depth: 0.03
 --- !u!1 &669396856
 GameObject:
   m_ObjectHideFlags: 0
@@ -784,8 +804,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28d3029c84ee07e42b6951b153757bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_shakeAmplitude: 75
-  m_shakeRate: 20
+  m_shakeAmplitude: 100
+  m_shakeRate: 30
 --- !u!222 &689252063
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -53,6 +53,7 @@ public class NoteController : MonoBehaviour {
 	[SerializeField] AudioSource m_BGM;
 
 	private AudioSource m_hitsoundPlayer = null;
+	private BackgroundController m_bgController = null;
 
 	List<Note> m_activeNotes; //Contains all of the notes currently moving and checking input
 	int m_currentLetter = 0;
@@ -62,6 +63,7 @@ public class NoteController : MonoBehaviour {
 	void Start ()
 	{
 		m_hitsoundPlayer = GetComponent<AudioSource>();
+		m_bgController = GetComponent<BackgroundController>();
 		m_activeNotes = new List<Note>();
 		m_fullScript = MainMenuController.GameString.ToUpper();
 		m_fullTextDisplay.GetComponent<TMPro.TMP_Text>().text = MainMenuController.GameString;
@@ -113,7 +115,8 @@ public class NoteController : MonoBehaviour {
 			m_score += (int)((m_goodDistance - distance) / 5.0f) * m_hitMultiplier;
 			UpdateScore();
 			m_particleHitFX.Play();
-			UIShake.i.Shake(0.1f);
+			UIShake.i.Shake(0.2f);
+			m_bgController.HitNote();
 			if (distance <= m_perfectDistance)
 			{
 				StartCoroutine(ShowHitText("Perfect", 60.0f / (m_BPM * 1.1f)));
@@ -128,6 +131,7 @@ public class NoteController : MonoBehaviour {
 			m_hitMultiplier = 0;
 			UpdateScore();
 			StartCoroutine(ShowHitText("Miss", 60.0f / (m_BPM * 1.1f)));
+			m_bgController.MissNote();
 		}
 		m_activeNotes.RemoveAt(noteIndex);
 
