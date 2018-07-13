@@ -9,6 +9,7 @@ public class EffectManager : MonoBehaviour
 	[SerializeField] ParticleSystem m_particleHitFX = null;
 	[SerializeField] AudioSource m_BGM;
 	[SerializeField] TMPro.TMP_Text m_hitText = null;
+	[SerializeField] TMPro.TMP_Text m_comboNotif = null;
 
 	private BackgroundController m_bgController = null;
 	private AudioSource m_hitsoundPlayer = null;
@@ -36,7 +37,7 @@ public class EffectManager : MonoBehaviour
 	public void HitGood()
 	{
 		m_particleHitFX.Play();
-		UIShake.i.Shake(0.2f);
+		UIShake.i.Shake(0.15f);
 		m_bgController.HitNote();
 		StartCoroutine(ShowHitText("Good", 60.0f / (m_BPM * 1.1f)));
 		StartCoroutine(ShrinkHitIndicator());
@@ -82,5 +83,16 @@ public class EffectManager : MonoBehaviour
 		m_BGM.volume = 0;
 		yield return new WaitForSeconds(0.5f);
 		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+	}
+	public void ShowComboText(int combo)
+	{
+		StartCoroutine(ShowComboNotif(combo));
+	}
+	IEnumerator ShowComboNotif(int combo)
+	{
+		m_comboNotif.text = combo + "x COMBO";
+		m_comboNotif.gameObject.SetActive(true);
+		yield return new WaitForSeconds(1.5f);
+		m_comboNotif.gameObject.SetActive(false);
 	}
 }

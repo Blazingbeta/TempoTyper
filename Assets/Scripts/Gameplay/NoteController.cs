@@ -49,6 +49,7 @@ public class NoteController : MonoBehaviour {
 	[SerializeField] Image m_progressMeter = null;
 
 	EffectManager m_effectManager = null;
+	HealthController m_healthController = null;
 
 	List<Note> m_activeNotes; //Contains all of the notes currently moving and checking input
 	int m_currentLetter = 0;
@@ -58,6 +59,8 @@ public class NoteController : MonoBehaviour {
 	void Start ()
 	{
 		m_effectManager = GetComponent<EffectManager>();
+		m_healthController = GetComponent<HealthController>();
+
 		m_effectManager.Initialize(m_BPM);
 		m_activeNotes = new List<Note>();
 		m_fullScript = MainMenuController.GameString.ToUpper();
@@ -89,6 +92,15 @@ public class NoteController : MonoBehaviour {
 		}
 		UpdateProgressBar();
 	}
+	//Called from HealthController
+	public void GameOver()
+	{
+		//Freeze Input
+		//Song Slowdown
+		//Note falloff
+		//Display Gameover
+		//Back to menu
+	}
 	void UpdateProgressBar()
 	{
 		m_progressMeter.fillAmount = (Time.time - m_songStartTime) / m_totalSongTime;
@@ -97,6 +109,10 @@ public class NoteController : MonoBehaviour {
 	{
 		m_scoreText.text = "Score: " + m_score.ToString("D6");
 		m_multiplierText.text = "x" + m_hitMultiplier;
+		if(m_hitMultiplier != 0 && (m_hitMultiplier % 15 == 0 || m_hitMultiplier % 50 == 0))
+		{
+			m_effectManager.ShowComboText(m_hitMultiplier);
+		}
 	}
 	//Is also called when a note is scrolled off the screen
 	void HitNote(int noteIndex, bool wasPressed)
@@ -112,10 +128,12 @@ public class NoteController : MonoBehaviour {
 			if (distance <= m_perfectDistance)
 			{
 				m_effectManager.HitPerfect();
+				m_healthController.HitPerfect();
 			}
 			else
 			{
 				m_effectManager.HitGood();
+				m_healthController.HitGood();
 			}
 		}
 		else
@@ -123,6 +141,7 @@ public class NoteController : MonoBehaviour {
 			m_hitMultiplier = 0;
 			UpdateScore();
 			m_effectManager.MissNote(wasPressed);
+			m_healthController.HitMiss();
 		}
 		m_activeNotes.RemoveAt(noteIndex);
 

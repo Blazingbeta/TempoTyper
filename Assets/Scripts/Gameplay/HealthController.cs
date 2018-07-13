@@ -29,11 +29,13 @@ public class HealthController : MonoBehaviour
 	public void HitMiss()
 	{
 		m_currentHealth -= m_healthLoss;
+		UpdateBG();
 		if(m_currentHealth <= 0)
 		{
 			//is dead
+			GetComponent<NoteController>().GameOver();
+			m_BGC.Dead();
 		}
-		UpdateBG();
 	}
 	void UpdateBG()
 	{
