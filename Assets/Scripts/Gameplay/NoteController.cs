@@ -48,6 +48,10 @@ public class NoteController : MonoBehaviour {
 
 	[SerializeField] Image m_progressMeter = null;
 
+	[SerializeField] AudioSource m_BGM = null;
+	[SerializeField] CanvasGroup m_scrollingPanel = null;
+	[SerializeField] CanvasGroup m_gameoverPanel = null;
+
 	EffectManager m_effectManager = null;
 	HealthController m_healthController = null;
 
@@ -56,6 +60,7 @@ public class NoteController : MonoBehaviour {
 	int m_highlightedLetterIndex = 0;
 	float m_totalSongTime;
 	float m_songStartTime;
+	bool m_isGameOver = false;
 	void Start ()
 	{
 		m_effectManager = GetComponent<EffectManager>();
@@ -69,15 +74,17 @@ public class NoteController : MonoBehaviour {
 		//Get the delay that the notes need to be spawned at for the bpm to line up
 		float distanceToHitmarker = Mathf.Abs(750f - m_noteHitPosition);
 		float timeOffset = distanceToHitmarker / m_noteScrollSpeed;
+		//DELAY THE SONG START NOT THE NOTE SPAWN
 		m_songStartTime = Time.time;
 		//The total time of the song is the offset + timePerNote*notes
 		m_totalSongTime = timeOffset*2 + (60 / (float)m_BPM) * m_fullScript.Length;
-		Debug.Log(m_totalSongTime);
-		StartCoroutine(SpawnNotes((float)60/m_BPM, timeOffset));
+		StartCoroutine(SpawnNotes((float)60/m_BPM));
+		StartCoroutine(DelaySongStart(timeOffset));
 	}
 	
 	void Update ()
 	{
+		if (m_isGameOver) return;
 		Vector2 scrollAmount = Vector2.left * m_noteScrollSpeed * Time.deltaTime;
 		m_activeNotes.ForEach(n => n.m_note.anchoredPosition += scrollAmount);
 		if (m_activeNotes.Count > 0 && m_activeNotes[0].IsNoteHit())
@@ -96,10 +103,28 @@ public class NoteController : MonoBehaviour {
 	public void GameOver()
 	{
 		//Freeze Input
-		//Song Slowdown
-		//Note falloff
-		//Display Gameover
+		m_isGameOver = true;
+		StartCoroutine(EndGame());
+	}
+	IEnumerator EndGame()
+	{
+		float fadeTime = 4.0f;
+		float timer = fadeTime;
+		while(timer > 0)
+		{
+			timer -= Time.deltaTime;
+			float percent = timer / fadeTime;
+			//Song Slowdown
+			m_BGM.pitch = percent;
+			//Notes fade
+			m_scrollingPanel.alpha = Mathf.Clamp01((timer - (fadeTime/2))/fadeTime);
+			//Display Gameover
+			m_gameoverPanel.alpha = 1.0f - percent;
+			yield return null;
+		}
 		//Back to menu
+		yield return new WaitForSeconds(1.0f);
+		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
 	}
 	void UpdateProgressBar()
 	{
@@ -162,16 +187,21 @@ public class NoteController : MonoBehaviour {
 			m_effectManager.EndSong();
 		}
 	}
-	IEnumerator SpawnNotes(float delay, float offset)
+	IEnumerator SpawnNotes(float delay)
 	{
-		yield return new WaitForSeconds(offset);
 		while (m_currentLetter < m_fullScript.Length)
 		{
-			yield return new WaitForSeconds(delay);
 			if(m_fullScript[m_currentLetter] != ' ')
 				SpawnNextNote();
 			m_currentLetter++;
+			yield return new WaitForSeconds(delay);
 		}
+	}
+	IEnumerator DelaySongStart(float offset)
+	{
+		yield return new WaitForSeconds(offset);
+		m_BGM.Play();
+		//throw new System.Exception();
 	}
 	void SpawnNextNote()
 	{

@@ -11,6 +11,9 @@ public class EffectManager : MonoBehaviour
 	[SerializeField] TMPro.TMP_Text m_hitText = null;
 	[SerializeField] TMPro.TMP_Text m_comboNotif = null;
 
+	[SerializeField] float m_minPitch;
+	[SerializeField] float m_maxPitch;
+
 	private BackgroundController m_bgController = null;
 	private AudioSource m_hitsoundPlayer = null;
 
@@ -61,6 +64,7 @@ public class EffectManager : MonoBehaviour
 	IEnumerator ShrinkHitIndicator()
 	{
 		m_hitCircle.rectTransform.sizeDelta = Vector2.one * 125;
+		m_hitsoundPlayer.pitch = Random.Range(m_minPitch, m_maxPitch);
 		m_hitsoundPlayer.Play();
 		yield return new WaitForSeconds(0.2f);
 		m_hitCircle.rectTransform.sizeDelta = Vector2.one * 150;
@@ -90,6 +94,7 @@ public class EffectManager : MonoBehaviour
 	}
 	IEnumerator ShowComboNotif(int combo)
 	{
+		//Slide in from the bottom, slow in the middle, fade out sliding up
 		m_comboNotif.text = combo + "x COMBO";
 		m_comboNotif.gameObject.SetActive(true);
 		yield return new WaitForSeconds(1.5f);
