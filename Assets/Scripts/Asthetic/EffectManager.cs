@@ -10,6 +10,9 @@ public class EffectManager : MonoBehaviour
 	[SerializeField] AudioSource m_BGM;
 	[SerializeField] TMPro.TMP_Text m_hitText = null;
 	[SerializeField] TMPro.TMP_Text m_comboNotif = null;
+	[SerializeField] AudioClip m_missNoteSFX;
+	[SerializeField] AudioClip m_applauseSFX;
+	[SerializeField] CanvasGroup m_gameWinPanel = null;
 
 	[SerializeField] float m_minPitch;
 	[SerializeField] float m_maxPitch;
@@ -35,7 +38,7 @@ public class EffectManager : MonoBehaviour
 		UIShake.i.Shake(0.2f);
 		m_bgController.HitNote();
 		StartCoroutine(ShowHitText("Perfect", 60.0f / (m_BPM * 1.1f)));
-		StartCoroutine(ShrinkHitIndicator());
+		StartCoroutine(ShrinkHitIndicator(true));
 	}
 	public void HitGood()
 	{
@@ -43,13 +46,14 @@ public class EffectManager : MonoBehaviour
 		UIShake.i.Shake(0.15f);
 		m_bgController.HitNote();
 		StartCoroutine(ShowHitText("Good", 60.0f / (m_BPM * 1.1f)));
-		StartCoroutine(ShrinkHitIndicator());
+		StartCoroutine(ShrinkHitIndicator(true));
 	}
 	public void MissNote(bool wasPressed)
 	{
 		m_bgController.MissNote();
 		StartCoroutine(ShowHitText("Miss", 60.0f / (m_BPM * 1.1f)));
-		if (wasPressed) StartCoroutine(ShrinkHitIndicator());
+		m_hitsoundPlayer.PlayOneShot(m_missNoteSFX);
+		if (wasPressed) StartCoroutine(ShrinkHitIndicator(false));
 	}
 	int m_currentRunning = 0;
 	IEnumerator ShowHitText(string text, float duration)
@@ -61,11 +65,14 @@ public class EffectManager : MonoBehaviour
 		if (m_currentRunning == 0)
 			m_hitText.text = "";
 	}
-	IEnumerator ShrinkHitIndicator()
+	IEnumerator ShrinkHitIndicator(bool wasHit)
 	{
 		m_hitCircle.rectTransform.sizeDelta = Vector2.one * 125;
-		m_hitsoundPlayer.pitch = Random.Range(m_minPitch, m_maxPitch);
-		m_hitsoundPlayer.Play();
+		if (wasHit)
+		{
+			m_hitsoundPlayer.pitch = Random.Range(m_minPitch, m_maxPitch);
+			m_hitsoundPlayer.Play();
+		}
 		yield return new WaitForSeconds(0.2f);
 		m_hitCircle.rectTransform.sizeDelta = Vector2.one * 150;
 	}
@@ -73,6 +80,7 @@ public class EffectManager : MonoBehaviour
 	{
 		//Fade out bgm
 		StartCoroutine(SongFade());
+		StartCoroutine(SongWin());
 	}
 	//Automatically ends the song, careful
 	IEnumerator SongFade()
@@ -85,12 +93,31 @@ public class EffectManager : MonoBehaviour
 			yield return null;
 		}
 		m_BGM.volume = 0;
-		yield return new WaitForSeconds(0.5f);
+	}
+
+	IEnumerator SongWin()
+	{
+		//Show victory text
+		//wait for applause to end to end song
+		yield return new WaitForSeconds(1.0f);
+		m_hitsoundPlayer.PlayOneShot(m_applauseSFX);
+		float halfApplauseTime = (m_applauseSFX.length/2.0f) + 0.1f;
+		float timer = 0.0f;
+		while(timer < halfApplauseTime)
+		{
+			yield return null;
+			timer += Time.deltaTime;
+			m_gameWinPanel.alpha = timer / halfApplauseTime;
+		}
+		m_gameWinPanel.alpha = 1.0f;
+		//wait for applause to end
+		yield return new WaitForSeconds(halfApplauseTime);
 		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
 	}
 	public void ShowComboText(int combo)
 	{
 		StartCoroutine(ShowComboNotif(combo));
+
 	}
 	IEnumerator ShowComboNotif(int combo)
 	{

@@ -78,7 +78,7 @@ public class NoteController : MonoBehaviour {
 		//DELAY THE SONG START NOT THE NOTE SPAWN
 		m_songStartTime = Time.time;
 		//The total time of the song is the offset + timePerNote*notes
-		m_totalSongTime = timeOffset*2 + (60 / (float)m_BPM) * m_fullScript.Length;
+		m_totalSongTime = timeOffset + (60 / (float)m_BPM) * m_fullScript.Length;
 		StartCoroutine(SpawnNotes((float)60/m_BPM));
 		StartCoroutine(DelaySongStart(timeOffset));
 	}

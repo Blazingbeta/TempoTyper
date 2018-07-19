@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MainMenuController : MonoBehaviour {
-	public static string GameString = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHH";
+	public static string GameString = "Hello, World!";
 	[SerializeField] CanvasGroup m_mainGroup = null, m_selectGroup = null;
 	[SerializeField] float m_fadeTime = 1.0f;
 	public void LoadSong(string name)
