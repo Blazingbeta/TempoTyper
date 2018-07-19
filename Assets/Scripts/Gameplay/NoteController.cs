@@ -32,6 +32,7 @@ public class NoteController : MonoBehaviour {
 	[SerializeField] int m_noteMissPosition = -750;
 	[SerializeField] int m_perfectDistance = 30;
 	[SerializeField] int m_goodDistance = 100;
+	[SerializeField] int m_maximumHitDistance = 300;
 
 	[SerializeField] float m_textCharDistance = 38.422f;
 	[SerializeField] float m_textSpaceDistance = 129.362f;
@@ -81,22 +82,32 @@ public class NoteController : MonoBehaviour {
 		StartCoroutine(SpawnNotes((float)60/m_BPM));
 		StartCoroutine(DelaySongStart(timeOffset));
 	}
-	
+	List<KeyCode> m_alreadyCheckedKeys = new List<KeyCode>();
 	void Update ()
 	{
 		if (m_isGameOver) return;
+		//For each, if not already checked keycode, then check Isnotehit
+		List<Note> ienumarbleNotes = new List<Note>(m_activeNotes);
+		foreach (Note note in ienumarbleNotes)
+		{
+			if (!m_alreadyCheckedKeys.Contains(note.m_keycode))
+			{
+				m_alreadyCheckedKeys.Add(note.m_keycode);
+				if (note.IsNoteHit() && Mathf.Abs(m_noteHitPosition - note.m_note.anchoredPosition.x) <= m_maximumHitDistance)
+				{
+					HitNote(note, true);
+					//StartCoroutine(ShrinkHitIndicator());
+				}
+				else if (note.m_note.anchoredPosition.x < m_noteMissPosition)
+				{
+					HitNote(note, false);
+					//m_activeNotes[0].m_text.textInfo.characterInfo[0].
+				}
+			}
+		}
+		m_alreadyCheckedKeys.Clear();
 		Vector2 scrollAmount = Vector2.left * m_noteScrollSpeed * Time.deltaTime;
 		m_activeNotes.ForEach(n => n.m_note.anchoredPosition += scrollAmount);
-		if (m_activeNotes.Count > 0 && m_activeNotes[0].IsNoteHit())
-		{
-			HitNote(0, true);
-			//StartCoroutine(ShrinkHitIndicator());
-		}
-		else if (m_activeNotes.Count > 0 && m_activeNotes[0].m_note.anchoredPosition.x < m_noteMissPosition)
-		{
-			HitNote(0, false);
-			//m_activeNotes[0].m_text.textInfo.characterInfo[0].
-		}
 		UpdateProgressBar();
 	}
 	//Called from HealthController
@@ -140,10 +151,10 @@ public class NoteController : MonoBehaviour {
 		}
 	}
 	//Is also called when a note is scrolled off the screen
-	void HitNote(int noteIndex, bool wasPressed)
+	void HitNote(Note note, bool wasPressed)
 	{
-		m_activeNotes[noteIndex].m_note.gameObject.SetActive(false);
-		float distance = Mathf.Abs(m_noteHitPosition - m_activeNotes[noteIndex].m_note.anchoredPosition.x);
+		note.m_note.gameObject.SetActive(false);
+		float distance = Mathf.Abs(m_noteHitPosition - note.m_note.anchoredPosition.x);
 
 		if (distance <= m_goodDistance)
 		{
@@ -168,7 +179,7 @@ public class NoteController : MonoBehaviour {
 			m_effectManager.MissNote(wasPressed);
 			m_healthController.HitMiss();
 		}
-		m_activeNotes.RemoveAt(noteIndex);
+		m_activeNotes.Remove(note);
 
 		m_highlightedLetterIndex++;
 		if (m_highlightedLetterIndex < MainMenuController.GameString.Length)

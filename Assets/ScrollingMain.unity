@@ -450,6 +450,7 @@ MonoBehaviour:
   m_noteMissPosition: -750
   m_perfectDistance: 30
   m_goodDistance: 100
+  m_maximumHitDistance: 300
   m_textCharDistance: 38.422
   m_textSpaceDistance: 129.362
   m_fullTextDisplay: {fileID: 326783182}

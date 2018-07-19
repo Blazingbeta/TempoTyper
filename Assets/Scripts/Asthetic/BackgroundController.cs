@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BackgroundController : MonoBehaviour {
 	Material m_skyboxMat;
-	[SerializeField] Color m_baseColor, m_lowHealthColor, m_deadColor;
+	[SerializeField] Color m_baseColor, m_lowHealthColor = Color.red, m_deadColor = Color.black;
 	[SerializeField] float m_maxSaturation = 0.5f;
 	[SerializeField] float m_saturationDecayTime = 0.2f;
 
