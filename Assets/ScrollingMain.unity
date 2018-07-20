@@ -451,6 +451,7 @@ MonoBehaviour:
   m_perfectDistance: 30
   m_goodDistance: 100
   m_maximumHitDistance: 300
+  m_gameDelayAmount: 1.5
   m_textCharDistance: 38.422
   m_textSpaceDistance: 129.362
   m_fullTextDisplay: {fileID: 326783182}
@@ -625,9 +626,43 @@ MonoBehaviour:
   m_comboNotif: {fileID: 1172916126}
   m_missNoteSFX: {fileID: 8300000, guid: 345e9d5bed0db6e46b96ee090b12e473, type: 3}
   m_applauseSFX: {fileID: 8300000, guid: 7f40e6bf0277b024cbb8d008bababcf7, type: 3}
+  m_comboSFX: {fileID: 8300000, guid: 19272bcab0d01a9409df259e71ffeb56, type: 3}
   m_gameWinPanel: {fileID: 1911923045}
   m_minPitch: 1
   m_maxPitch: 1.1
+  m_comboAlphaCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.4989059
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.0021315366
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &656047602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1169,16 +1204,16 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 89fb94e475c1c724085c434d1f0753db, type: 2}
-  m_sharedMaterial: {fileID: 21577717425659424, guid: 89fb94e475c1c724085c434d1f0753db,
+  m_fontAsset: {fileID: 11400000, guid: 0a9bec3e8b1582a4e947f34da8e4816c, type: 2}
+  m_sharedMaterial: {fileID: 21577717425659424, guid: 0a9bec3e8b1582a4e947f34da8e4816c,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190335
-  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
+    rgba: 4278223871
+  m_fontColor: {r: 1, g: 0.5137255, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -1278,6 +1313,7 @@ GameObject:
   - component: {fileID: 1172916125}
   - component: {fileID: 1172916127}
   - component: {fileID: 1172916126}
+  - component: {fileID: 1172916128}
   m_Layer: 0
   m_Name: Combo Notification
   m_TagString: Untagged
@@ -1325,15 +1361,14 @@ MonoBehaviour:
   m_text: 25x COMBO
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
-  m_sharedMaterial: {fileID: 21577717425659424, guid: 47e54e4d2dd0b104f84345fad54c0b83,
-    type: 2}
+  m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 3607101439
-  m_fontColor: {r: 1, g: 1, b: 1, a: 0.8392157}
+    rgba: 4278222535
+  m_fontColor: {r: 0.7830189, g: 0.49437666, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
@@ -1368,7 +1403,7 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -1399,13 +1434,13 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
   m_isInputParsingRequired: 0
   m_inputSource: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_subTextObjects:
   - {fileID: 0}
   - {fileID: 0}
@@ -1423,6 +1458,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1172916124}
+--- !u!225 &1172916128
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1172916124}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1202210478
 GameObject:
   m_ObjectHideFlags: 0

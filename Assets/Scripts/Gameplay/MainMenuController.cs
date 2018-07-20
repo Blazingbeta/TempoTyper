@@ -12,7 +12,8 @@ public class MainMenuController : MonoBehaviour {
 		string text = file.text;
 		GameString = text.Replace('\n', ' ');
 		//Load game
-		UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+		//UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+		SceneLoader.i.LoadScene(1);
 	}
 	public void ToSongSelectMenu()
 	{
@@ -74,10 +75,10 @@ public class MainMenuController : MonoBehaviour {
 	}
 	public void ToTutorial()
 	{
-		UnityEngine.SceneManagement.SceneManager.LoadScene(2);
+		SceneLoader.i.LoadScene(2);
 	}
 	public void FromTutorial()
 	{
-		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+		SceneLoader.i.LoadScene(0);
 	}
 }

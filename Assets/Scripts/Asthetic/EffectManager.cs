@@ -12,6 +12,7 @@ public class EffectManager : MonoBehaviour
 	[SerializeField] TMPro.TMP_Text m_comboNotif = null;
 	[SerializeField] AudioClip m_missNoteSFX;
 	[SerializeField] AudioClip m_applauseSFX;
+	[SerializeField] AudioClip m_comboSFX;
 	[SerializeField] CanvasGroup m_gameWinPanel = null;
 
 	[SerializeField] float m_minPitch;
@@ -112,19 +113,34 @@ public class EffectManager : MonoBehaviour
 		m_gameWinPanel.alpha = 1.0f;
 		//wait for applause to end
 		yield return new WaitForSeconds(halfApplauseTime);
-		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+		SceneLoader.i.LoadScene(0);
 	}
 	public void ShowComboText(int combo)
 	{
 		StartCoroutine(ShowComboNotif(combo));
 
 	}
+	[SerializeField] AnimationCurve m_comboAlphaCurve = null;
 	IEnumerator ShowComboNotif(int combo)
 	{
 		//Slide in from the bottom, slow in the middle, fade out sliding up
+		//.5 for each
+		m_hitsoundPlayer.PlayOneShot(m_comboSFX);
 		m_comboNotif.text = combo + "x COMBO";
 		m_comboNotif.gameObject.SetActive(true);
-		yield return new WaitForSeconds(1.5f);
+		RectTransform rect = m_comboNotif.GetComponent<RectTransform>();
+		CanvasGroup canvas = m_comboNotif.GetComponent<CanvasGroup>();
+		Vector2 startPos = rect.anchoredPosition;
+		float tanPos = -1.25f;
+		while(tanPos <= 1.25)
+		{
+			canvas.alpha = m_comboAlphaCurve.Evaluate((tanPos+1.25f) / 2.5f);
+			tanPos += Time.deltaTime*1.5f;
+			rect.anchoredPosition = startPos + Vector2.up*(50.0f * Mathf.Tan(tanPos)/4.0f);
+			yield return null;
+		}
+		//yield return new WaitForSeconds(1.5f);
 		m_comboNotif.gameObject.SetActive(false);
+		rect.anchoredPosition = startPos;
 	}
 }

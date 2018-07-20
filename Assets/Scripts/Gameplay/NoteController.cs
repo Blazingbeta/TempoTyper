@@ -33,6 +33,7 @@ public class NoteController : MonoBehaviour {
 	[SerializeField] int m_perfectDistance = 30;
 	[SerializeField] int m_goodDistance = 100;
 	[SerializeField] int m_maximumHitDistance = 300;
+	[SerializeField] float m_gameDelayAmount = 1.5f;
 
 	[SerializeField] float m_textCharDistance = 38.422f;
 	[SerializeField] float m_textSpaceDistance = 129.362f;
@@ -79,6 +80,7 @@ public class NoteController : MonoBehaviour {
 		m_songStartTime = Time.time;
 		//The total time of the song is the offset + timePerNote*notes
 		m_totalSongTime = timeOffset + (60 / (float)m_BPM) * m_fullScript.Length;
+		//Both of these coroutines wait the game delay just so everything fades in correctly
 		StartCoroutine(SpawnNotes((float)60/m_BPM));
 		StartCoroutine(DelaySongStart(timeOffset));
 	}
@@ -119,6 +121,7 @@ public class NoteController : MonoBehaviour {
 	}
 	IEnumerator EndGame()
 	{
+		//Yeah this really shouldn't be in this class
 		float fadeTime = 4.0f;
 		float timer = fadeTime;
 		while(timer > 0)
@@ -135,7 +138,7 @@ public class NoteController : MonoBehaviour {
 		}
 		//Back to menu
 		yield return new WaitForSeconds(1.0f);
-		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+		SceneLoader.i.LoadScene(0);
 	}
 	void UpdateProgressBar()
 	{
@@ -200,7 +203,8 @@ public class NoteController : MonoBehaviour {
 	}
 	IEnumerator SpawnNotes(float delay)
 	{
-		while (m_currentLetter < m_fullScript.Length)
+		yield return new WaitForSeconds(m_gameDelayAmount);
+		while (m_currentLetter < m_fullScript.Length && !m_isGameOver)
 		{
 			if(m_fullScript[m_currentLetter] != ' ')
 				SpawnNextNote();
@@ -210,7 +214,7 @@ public class NoteController : MonoBehaviour {
 	}
 	IEnumerator DelaySongStart(float offset)
 	{
-		yield return new WaitForSeconds(offset);
+		yield return new WaitForSeconds(offset + m_gameDelayAmount);
 		m_BGM.Play();
 		//throw new System.Exception();
 	}
