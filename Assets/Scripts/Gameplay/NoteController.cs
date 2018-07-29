@@ -41,7 +41,8 @@ public class NoteController : MonoBehaviour {
 	[SerializeField] RectTransform m_fullTextDisplay = null;
 	[SerializeField] TMPro.TMP_Text m_letterHighlightText = null;
 
-	string m_fullScript;
+	string m_noteScript;
+	string m_textScript;
 
 	private int m_score = 0;
 	private int m_hitMultiplier = 0;
@@ -65,23 +66,44 @@ public class NoteController : MonoBehaviour {
 	bool m_isGameOver = false;
 	void Start ()
 	{
+		InitializeSong();
 		m_effectManager = GetComponent<EffectManager>();
 		m_healthController = GetComponent<HealthController>();
 
 		m_effectManager.Initialize(m_BPM);
 		m_activeNotes = new List<Note>();
-		m_fullScript = MainMenuController.GameString.ToUpper();
-		m_fullTextDisplay.GetComponent<TMPro.TMP_Text>().text = MainMenuController.GameString;
-		m_letterHighlightText.text = MainMenuController.GameString[0].ToString();
+		StartGame();
+	}
+	void InitializeSong()
+	{
+		BeatData data = Resources.Load(MainMenuController.DataFilePath) as BeatData;
+		m_BPM = data.BPM;
+		m_BGM.clip = data.Song;
+		m_noteScrollSpeed = data.NoteScrollSpeed;
+		m_textScript = data.Text;
+		m_noteScript = data.Text.ToUpper();
+		if (MainMenuController.Difficulty == 1)
+		{
+			//m_noteScrollSpeed *= 2;
+			m_BPM *= 2;
+			m_textScript = data.HardText;
+			m_noteScript = data.HardText.ToUpper();
+		}
+
+		m_fullTextDisplay.GetComponent<TMPro.TMP_Text>().text = m_textScript;
+		m_letterHighlightText.text = m_textScript[0].ToString();
+	}
+	void StartGame()
+	{
 		//Get the delay that the notes need to be spawned at for the bpm to line up
 		float distanceToHitmarker = Mathf.Abs(750f - m_noteHitPosition);
 		float timeOffset = distanceToHitmarker / m_noteScrollSpeed;
 		//DELAY THE SONG START NOT THE NOTE SPAWN
 		m_songStartTime = Time.time;
 		//The total time of the song is the offset + timePerNote*notes
-		m_totalSongTime = timeOffset + (60 / (float)m_BPM) * m_fullScript.Length;
+		m_totalSongTime = timeOffset + (60 / (float)m_BPM) * m_textScript.Length;
 		//Both of these coroutines wait the game delay just so everything fades in correctly
-		StartCoroutine(SpawnNotes((float)60/m_BPM));
+		StartCoroutine(SpawnNotes((float)60 / m_BPM));
 		StartCoroutine(DelaySongStart(timeOffset));
 	}
 	List<KeyCode> m_alreadyCheckedKeys = new List<KeyCode>();
@@ -148,7 +170,9 @@ public class NoteController : MonoBehaviour {
 	{
 		m_scoreText.text = "Score: " + m_score.ToString("D6");
 		m_multiplierText.text = "x" + m_hitMultiplier;
-		if(m_hitMultiplier != 0 && (m_hitMultiplier % 15 == 0 || m_hitMultiplier % 50 == 0))
+		//If combo is a multiple of 15 or 50, show notify but not if the 15 is within 5 of a 50 combo mark
+		if(m_hitMultiplier != 0 && (m_hitMultiplier % 15 == 0 && m_hitMultiplier % 50 != 45 && m_hitMultiplier % 50 != 5
+			|| m_hitMultiplier % 50 == 0))
 		{
 			m_effectManager.ShowComboText(m_hitMultiplier);
 		}
@@ -185,14 +209,14 @@ public class NoteController : MonoBehaviour {
 		m_activeNotes.Remove(note);
 
 		m_highlightedLetterIndex++;
-		if (m_highlightedLetterIndex < MainMenuController.GameString.Length)
+		if (m_highlightedLetterIndex < m_textScript.Length)
 		{
-			if (MainMenuController.GameString[m_highlightedLetterIndex] == ' ')
+			if (m_textScript[m_highlightedLetterIndex] == ' ')
 			{
 				m_highlightedLetterIndex++;
 				m_fullTextDisplay.anchoredPosition += Vector2.left * (m_textSpaceDistance - m_textCharDistance);
 			}
-			m_letterHighlightText.text = MainMenuController.GameString[m_highlightedLetterIndex].ToString();
+			m_letterHighlightText.text = m_textScript[m_highlightedLetterIndex].ToString();
 			m_fullTextDisplay.anchoredPosition += Vector2.left * m_textCharDistance;
 		}
 		else
@@ -204,12 +228,18 @@ public class NoteController : MonoBehaviour {
 	IEnumerator SpawnNotes(float delay)
 	{
 		yield return new WaitForSeconds(m_gameDelayAmount);
-		while (m_currentLetter < m_fullScript.Length && !m_isGameOver)
+		float timePassed = 0.0f;
+		while (m_currentLetter < m_textScript.Length && !m_isGameOver)
 		{
-			if(m_fullScript[m_currentLetter] != ' ')
+			if(m_textScript[m_currentLetter] != ' ')
 				SpawnNextNote();
 			m_currentLetter++;
-			yield return new WaitForSeconds(delay);
+			while(timePassed < delay)
+			{
+				timePassed += Time.deltaTime;
+				yield return null;
+			}
+			timePassed -= delay;
 		}
 	}
 	IEnumerator DelaySongStart(float offset)
@@ -220,7 +250,7 @@ public class NoteController : MonoBehaviour {
 	}
 	void SpawnNextNote()
 	{
-		Note note = new Note(NotePool.i.GetObjectFromPool(), m_fullScript[m_currentLetter]);
+		Note note = new Note(NotePool.i.GetObjectFromPool(), m_noteScript[m_currentLetter]);
 		note.m_note.anchoredPosition = Vector2.right * 750;
 		m_activeNotes.Add(note);
 	}

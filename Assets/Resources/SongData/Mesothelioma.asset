@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd55e0aae92f7b94c97cb04e2254e93f, type: 3}
+  m_Name: Mesothelioma
+  m_EditorClassIdentifier: 
+  BPM: 127
+  Song: {fileID: 8300000, guid: 34242570740faf943927cbe01031a716, type: 3}
+  Text: If you or a loved one has been diagnosed with Mesothelioma you may be entitled
+    to financial compensation. Mesothelioma is a rare cancer linked to asbestos exposure.
+  HardText: If you or a loved one has been diagnosed with Mesothelioma you may be
+    entitled to financial compensation. Mesothelioma is a rare cancer linked to asbestos
+    exposure. Exposure to asbestos in the Navy, shipyards, mills, heating, construction
+    or the automotive industries may put you at risk. Please don't wait, call 1-800-99
+    LAW USA today for a free legal consultation and financial information packet.
+  NoteScrollSpeed: 700

@@ -20,6 +20,10 @@ public static class UtilityFunc
 		{
 			m_keycodes.Add(c, (KeyCode)System.Enum.Parse(typeof(KeyCode), c.ToString()));
 		}
+		for(char c = '0'; c <= '9'; c++)
+		{
+			m_keycodes.Add(c, (KeyCode)System.Enum.Parse(typeof(KeyCode), "Alpha" + c.ToString()));
+		}
 		//Special Characters
 		m_keycodes.Add('?', KeyCode.Slash);
 		m_keycodes.Add(',', KeyCode.Comma);
@@ -28,5 +32,7 @@ public static class UtilityFunc
 		m_keycodes.Add('\'', KeyCode.Quote);
 		m_keycodes.Add(' ', KeyCode.Space);
 		m_keycodes.Add('-', KeyCode.Minus);
+		m_keycodes.Add('[', KeyCode.LeftBracket);
+		m_keycodes.Add(']', KeyCode.RightBracket);
 	}
 }

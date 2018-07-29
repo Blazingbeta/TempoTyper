@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd55e0aae92f7b94c97cb04e2254e93f, type: 3}
+  m_Name: RickAndMorty
+  m_EditorClassIdentifier: 
+  BPM: 128
+  Song: {fileID: 8300000, guid: 0116c35a973dc1743add9fcb846eeb5a, type: 3}
+  Text: To be fair, you have to have a very high IQ to understand Rick and Morty.
+    The humor is extremely subtle, and without a solid grasp of theoretical physics
+    most of the jokes will go over a typical viewer's head.
+  HardText: To be fair, you have to have a very high IQ to understand Rick and Morty.
+    The humor is extremely subtle, and without a solid grasp of theoretical physics
+    most of the jokes will go over a typical viewer's head. There's also Rick's nihilistic
+    outlook, which is deftly woven into his characterisation- his personal philosophy
+    draws heavily from Narodnaya Volya literature, for instance.
+  NoteScrollSpeed: 700

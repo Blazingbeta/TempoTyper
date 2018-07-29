@@ -15,6 +15,7 @@ public class HealthController : MonoBehaviour
 	{
 		m_currentHealth = m_maxHealth;
 		m_BGC = GetComponent<BackgroundController>();
+		if (MainMenuController.Difficulty == 1) m_healthLoss *= 2;
 	}
 	public void HitPerfect()
 	{

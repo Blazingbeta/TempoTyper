@@ -3,71 +3,60 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MainMenuController : MonoBehaviour {
-	public static string GameString = "Hello, World!";
-	[SerializeField] CanvasGroup m_mainGroup = null, m_selectGroup = null;
+	public static string DataFilePath = "SongData/RickAndMorty";
+	public static int Difficulty = 1;
+	[SerializeField] CanvasGroup m_mainGroup = null, m_selectGroup = null, m_difficultyGroup = null;
 	[SerializeField] float m_fadeTime = 1.0f;
 	public void LoadSong(string name)
 	{
-		TextAsset file = Resources.Load("Texts/" + name) as TextAsset;
-		string text = file.text;
-		GameString = text.Replace('\n', ' ');
-		//Load game
-		//UnityEngine.SceneManagement.SceneManager.LoadScene(1);
-		SceneLoader.i.LoadScene(1);
+		DataFilePath = "SongData/" + name;
+		StartCoroutine(FadeBetweenCanvasLayers(m_selectGroup, m_difficultyGroup, m_fadeTime));
 	}
 	public void ToSongSelectMenu()
 	{
-		StartCoroutine(ToSongSelect());
+		StartCoroutine(FadeBetweenCanvasLayers(m_mainGroup, m_selectGroup, m_fadeTime));
 	}
 	public void BackToMainMenu()
 	{
-		StartCoroutine(ToMainMenu());
+		StartCoroutine(FadeBetweenCanvasLayers(m_selectGroup, m_mainGroup, m_fadeTime));
 	}
-	IEnumerator ToSongSelect()
+	public void SelectDifficulty(int difficulty)
 	{
-		m_mainGroup.interactable = false;
-		m_mainGroup.blocksRaycasts = false;
-		float time = 0f;
-		while (time < m_fadeTime)
-		{
-			m_mainGroup.alpha = 1f - (time / m_fadeTime);
-			time += Time.deltaTime;
-			yield return null;
-		}
-		m_mainGroup.alpha = 0;
-		time = 0f;
-		while(time < m_fadeTime)
-		{
-			m_selectGroup.alpha = (time / m_fadeTime);
-			time += Time.deltaTime;
-			yield return null;
-		}
-		m_selectGroup.alpha = 1;
-		m_selectGroup.interactable = true;
-		m_selectGroup.blocksRaycasts = true;
+		Difficulty = difficulty;
+		SceneLoader.i.LoadScene(1);
 	}
-	IEnumerator ToMainMenu()
+	public void DifficultyMenuToMainMenu()
 	{
-		m_selectGroup.interactable = false;
-		m_selectGroup.blocksRaycasts = false;
-		float time = 0f;
-		while(time < m_fadeTime)
+		StartCoroutine(FadeBetweenCanvasLayers(m_difficultyGroup, m_mainGroup, m_fadeTime));
+	}
+	/// <summary>
+	/// Swaps the canvas group by fading transparency over time
+	/// </summary>
+	/// <param name="a">The group to fade out</param>
+	/// <param name="b">The group to fade in </param>
+	/// <returns></returns>
+	IEnumerator FadeBetweenCanvasLayers(CanvasGroup a, CanvasGroup b, float timea)
+	{
+		a.interactable = false;
+		a.blocksRaycasts = false;
+		float timer = 0f;
+		while (timer < m_fadeTime)
 		{
-			m_selectGroup.alpha = 1f - (time / m_fadeTime);
-			time += Time.deltaTime;
+			a.alpha = 1f - (timer / m_fadeTime);
+			timer += Time.deltaTime;
 			yield return null;
 		}
-		m_selectGroup.alpha = 0;
-		time = 0f;
-		while (time < m_fadeTime)
+		a.alpha = 0;
+		timer = 0f;
+		while (timer < m_fadeTime)
 		{
-			m_mainGroup.alpha = (time / m_fadeTime);
-			time += Time.deltaTime;
+			b.alpha = (timer / m_fadeTime);
+			timer += Time.deltaTime;
 			yield return null;
 		}
-		m_mainGroup.alpha = 1;
-		m_mainGroup.interactable = true;
-		m_mainGroup.blocksRaycasts = true;
+		b.alpha = 1;
+		b.interactable = true;
+		b.blocksRaycasts = true;
 	}
 	public void QuitGame()
 	{
