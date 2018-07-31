@@ -11,7 +11,7 @@ public class MainMenuController : MonoBehaviour {
 	//Info Display Stuff
 	[SerializeField] TMPro.TMP_Text m_easyScore;
 	[SerializeField] TMPro.TMP_Text m_hardScore;
-	[SerializeField] GameObject m_songInfoPanel;
+	[SerializeField] Transform m_songInfoPanel;
 	Dictionary<string, string> m_highscoreTable = new Dictionary<string, string>();
 	Dictionary<string, BeatData> m_songInfo = new Dictionary<string, BeatData>();
 	private void Start()
@@ -30,7 +30,7 @@ public class MainMenuController : MonoBehaviour {
 		//Song Info Setup
 		for(int j = 0; j < songList.Length; j++)
 		{
-
+			m_songInfo.Add(songList[j], Resources.Load("SongData/" + songList[j]) as BeatData);
 		}
 	}
 	bool m_lockScoreMenu = false;
@@ -41,15 +41,18 @@ public class MainMenuController : MonoBehaviour {
 		m_easyScore.transform.parent.gameObject.SetActive(true);
 
 		//Song Info
-
-		m_songInfoPanel.SetActive(true);
+		BeatData data = m_songInfo[songName];
+		m_songInfoPanel.GetChild(1).GetComponent<TMPro.TMP_Text>().text = data.Artist;
+		m_songInfoPanel.GetChild(3).GetComponent<TMPro.TMP_Text>().text = data.SongName;
+		m_songInfoPanel.GetChild(5).GetComponent<TMPro.TMP_Text>().text = data.BPM.ToString();
+		m_songInfoPanel.gameObject.SetActive(true);
 	}
 	public void HoverEnd()
 	{
 		if (!m_lockScoreMenu)
 		{
 			m_easyScore.transform.parent.gameObject.SetActive(false);
-			m_songInfoPanel.SetActive(false);
+			m_songInfoPanel.gameObject.SetActive(false);
 		}
 	}
 	public void LoadSong(string name)

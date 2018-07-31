@@ -22,5 +22,5 @@ MonoBehaviour:
     gets faster each minute after you hear this signal. A single lap should be completed
     each time you hear this sound.
   NoteScrollSpeed: 900
-  Artist: The Fat Rat
+  Artist: TheFatRat
   SongName: Epic

@@ -15,6 +15,8 @@ public class HighscoreManager : MonoBehaviour {
 	[SerializeField] TMPro.TMP_Text m_scoreText;
 	[SerializeField] GameObject m_continueText;
 	[SerializeField] Transform m_previousScorePanel;
+	[SerializeField] AudioSource m_SFXPlayer;
+	[SerializeField] AudioClip m_finishSFX;
 	StringBuilder m_currentName = new StringBuilder();
 
 	string songName = "";
@@ -43,6 +45,7 @@ public class HighscoreManager : MonoBehaviour {
 			m_initialText.text = outputString;
 			m_continueText.SetActive(m_currentName.Length == 3);
 			UIShake.i.Shake(.2f);
+			m_SFXPlayer.Play();
 		}
 		if (Input.GetKeyDown(KeyCode.Backspace) && m_currentName.Length != 0)
 		{
@@ -55,9 +58,11 @@ public class HighscoreManager : MonoBehaviour {
 			m_initialText.text = outputString;
 			m_continueText.SetActive(false);
 			UIShake.i.Shake(.2f);
+			m_SFXPlayer.Play();
 		}
 		if (Input.GetKeyDown(KeyCode.Return) && m_currentName.Length == 3)
 		{
+			m_SFXPlayer.PlayOneShot(m_finishSFX);
 			//Save highscore and initials
 			PlayerPrefs.SetInt(songName + "Highscore", m_score);
 			PlayerPrefs.SetString(songName + "Initials", m_currentName.ToString());
