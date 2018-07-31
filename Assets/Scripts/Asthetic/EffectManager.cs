@@ -77,11 +77,11 @@ public class EffectManager : MonoBehaviour
 		yield return new WaitForSeconds(0.2f);
 		m_hitCircle.rectTransform.sizeDelta = Vector2.one * 150;
 	}
-	public void EndSong()
+	public void EndSong(int score)
 	{
 		//Fade out bgm
 		StartCoroutine(SongFade());
-		StartCoroutine(SongWin());
+		StartCoroutine(SongWin(score));
 	}
 	//Automatically ends the song, careful
 	IEnumerator SongFade()
@@ -96,7 +96,7 @@ public class EffectManager : MonoBehaviour
 		m_BGM.volume = 0;
 	}
 
-	IEnumerator SongWin()
+	IEnumerator SongWin(int score)
 	{
 		//Show victory text
 		//wait for applause to end to end song
@@ -113,7 +113,19 @@ public class EffectManager : MonoBehaviour
 		m_gameWinPanel.alpha = 1.0f;
 		//wait for applause to end
 		yield return new WaitForSeconds(halfApplauseTime);
-		SceneLoader.i.LoadScene(0);
+		string songName = MainMenuController.DataFilePath.Split('/')[1];
+		if (MainMenuController.Difficulty == 1)
+		{
+			songName += "Hard";
+		}
+		if (HighscoreManager.IsNewHighscore(songName, score))
+		{
+			SceneLoader.i.LoadScene(3);
+		}
+		else
+		{
+			SceneLoader.i.LoadScene(0);
+		}
 	}
 	public void ShowComboText(int combo)
 	{

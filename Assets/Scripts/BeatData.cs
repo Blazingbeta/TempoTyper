@@ -10,4 +10,6 @@ public class BeatData : ScriptableObject
 	public string Text;
 	public string HardText;
 	public int NoteScrollSpeed;
+	public string Artist;
+	public string SongName;
 }

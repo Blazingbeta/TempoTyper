@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Tutorial.unity
     guid: 78d1f1a9c4ee83e4383101b50ce26317
+  - enabled: 1
+    path: Assets/Highscore.unity
+    guid: 49308f70976c2df449492d82c42e27d9
   m_configObjects: {}

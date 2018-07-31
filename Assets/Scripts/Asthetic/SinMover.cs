@@ -17,8 +17,9 @@ public class SinMover : MonoBehaviour {
 		m_transform = GetComponent<RectTransform>();
 		startPos = m_transform.anchoredPosition;
 		currentTime = offset;
+		m_transform.anchoredPosition = startPos + Vector2.up * (Mathf.Sin(currentTime) * amplitude);
 	}
-	
+
 	void Update ()
 	{
 		currentTime += Time.deltaTime * rate;

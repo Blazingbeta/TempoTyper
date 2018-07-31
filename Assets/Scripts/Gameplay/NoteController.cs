@@ -160,7 +160,9 @@ public class NoteController : MonoBehaviour {
 		}
 		//Back to menu
 		yield return new WaitForSeconds(1.0f);
-		SceneLoader.i.LoadScene(0);
+		{
+			SceneLoader.i.LoadScene(0);
+		}
 	}
 	void UpdateProgressBar()
 	{
@@ -222,7 +224,7 @@ public class NoteController : MonoBehaviour {
 		else
 		{
 			m_letterHighlightText.text = "";
-			m_effectManager.EndSong();
+			m_effectManager.EndSong(m_score);
 		}
 	}
 	IEnumerator SpawnNotes(float delay)

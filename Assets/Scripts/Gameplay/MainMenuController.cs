@@ -7,8 +7,54 @@ public class MainMenuController : MonoBehaviour {
 	public static int Difficulty = 1;
 	[SerializeField] CanvasGroup m_mainGroup = null, m_selectGroup = null, m_difficultyGroup = null;
 	[SerializeField] float m_fadeTime = 1.0f;
+
+	//Info Display Stuff
+	[SerializeField] TMPro.TMP_Text m_easyScore;
+	[SerializeField] TMPro.TMP_Text m_hardScore;
+	[SerializeField] GameObject m_songInfoPanel;
+	Dictionary<string, string> m_highscoreTable = new Dictionary<string, string>();
+	Dictionary<string, BeatData> m_songInfo = new Dictionary<string, BeatData>();
+	private void Start()
+	{
+		string[] songList = new string[] { "RickAndMorty", "Mesothelioma", "PacerTest" };
+		//Highscore Setup
+		for(int j = 0; j < songList.Length; j++)
+		{
+			string easyText = PlayerPrefs.GetString(songList[j] + "Initials", "---") 
+				+ ":" + PlayerPrefs.GetInt(songList[j] + "Highscore", 0).ToString("D6");
+			string hardText = PlayerPrefs.GetString(songList[j] + "HardInitials", "---")
+				+ ":" + PlayerPrefs.GetInt(songList[j] + "HardHighscore", 0).ToString("D6");
+			m_highscoreTable.Add(songList[j], easyText);
+			m_highscoreTable.Add(songList[j] + "Hard", hardText);
+		}
+		//Song Info Setup
+		for(int j = 0; j < songList.Length; j++)
+		{
+
+		}
+	}
+	bool m_lockScoreMenu = false;
+	public void HoverSong(string songName)
+	{
+		m_easyScore.text = m_highscoreTable[songName];
+		m_hardScore.text = m_highscoreTable[songName + "Hard"];
+		m_easyScore.transform.parent.gameObject.SetActive(true);
+
+		//Song Info
+
+		m_songInfoPanel.SetActive(true);
+	}
+	public void HoverEnd()
+	{
+		if (!m_lockScoreMenu)
+		{
+			m_easyScore.transform.parent.gameObject.SetActive(false);
+			m_songInfoPanel.SetActive(false);
+		}
+	}
 	public void LoadSong(string name)
 	{
+		m_lockScoreMenu = true;
 		DataFilePath = "SongData/" + name;
 		StartCoroutine(FadeBetweenCanvasLayers(m_selectGroup, m_difficultyGroup, m_fadeTime));
 	}
@@ -27,6 +73,8 @@ public class MainMenuController : MonoBehaviour {
 	}
 	public void DifficultyMenuToMainMenu()
 	{
+		m_lockScoreMenu = false;
+		HoverEnd();
 		StartCoroutine(FadeBetweenCanvasLayers(m_difficultyGroup, m_mainGroup, m_fadeTime));
 	}
 	/// <summary>

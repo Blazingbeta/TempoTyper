@@ -7,6 +7,7 @@
 
 Shader "Unlit/TextureBackface" {
 Properties {
+    _Color ("Main Color (A=Opacity)", Color) = (1,1,1,1)
     _MainTex ("Base (RGB)", 2D) = "white" {}
 }
 
