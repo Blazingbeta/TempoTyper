@@ -14,6 +14,8 @@ public class EffectManager : MonoBehaviour
 	[SerializeField] AudioClip m_applauseSFX;
 	[SerializeField] AudioClip m_comboSFX;
 	[SerializeField] CanvasGroup m_gameWinPanel = null;
+	[SerializeField] ParticleSystem m_comboParticles = null;
+	[SerializeField] ParticleSystem m_winParticles = null;
 
 	[SerializeField] float m_minPitch;
 	[SerializeField] float m_maxPitch;
@@ -82,6 +84,7 @@ public class EffectManager : MonoBehaviour
 		//Fade out bgm
 		StartCoroutine(SongFade());
 		StartCoroutine(SongWin(score));
+		StartCoroutine(DelayParticleStart(0.6f));
 	}
 	//Automatically ends the song, careful
 	IEnumerator SongFade()
@@ -95,7 +98,11 @@ public class EffectManager : MonoBehaviour
 		}
 		m_BGM.volume = 0;
 	}
-
+	IEnumerator DelayParticleStart(float delay)
+	{
+		yield return new WaitForSeconds(delay);
+		m_winParticles.Play();
+	}
 	IEnumerator SongWin(int score)
 	{
 		//Show victory text
@@ -130,7 +137,7 @@ public class EffectManager : MonoBehaviour
 	public void ShowComboText(int combo)
 	{
 		StartCoroutine(ShowComboNotif(combo));
-
+		m_comboParticles.Play();
 	}
 	[SerializeField] AnimationCurve m_comboAlphaCurve = null;
 	IEnumerator ShowComboNotif(int combo)

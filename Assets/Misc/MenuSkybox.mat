@@ -78,6 +78,6 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color1: {r: 0.101960786, g: 0.2, b: 0.7411765, a: 1}
-    - _Color2: {r: 0.5660378, g: 0.5660378, b: 0.5660378, a: 0}
+    - _Color2: {r: 1, g: 0.7202141, b: 0.41037738, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _UpVector: {r: 0, g: 1, b: 0, a: 0}

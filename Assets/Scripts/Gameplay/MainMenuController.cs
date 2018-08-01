@@ -33,6 +33,14 @@ public class MainMenuController : MonoBehaviour {
 			m_songInfo.Add(songList[j], Resources.Load("SongData/" + songList[j]) as BeatData);
 		}
 	}
+	private void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.End))
+		{
+			PlayerPrefs.DeleteAll();
+			PlayerPrefs.Save();
+		}
+	}
 	bool m_lockScoreMenu = false;
 	public void HoverSong(string songName)
 	{
@@ -72,6 +80,7 @@ public class MainMenuController : MonoBehaviour {
 	public void SelectDifficulty(int difficulty)
 	{
 		Difficulty = difficulty;
+		SceneLoader.i.SetAudioSourceFade(Camera.main.GetComponent<AudioSource>());
 		SceneLoader.i.LoadScene(1);
 	}
 	public void DifficultyMenuToMainMenu()
@@ -115,6 +124,7 @@ public class MainMenuController : MonoBehaviour {
 	}
 	public void ToTutorial()
 	{
+		SceneLoader.i.SetAudioSourceFade(Camera.main.GetComponent<AudioSource>());
 		SceneLoader.i.LoadScene(2);
 	}
 	public void FromTutorial()

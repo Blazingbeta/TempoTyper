@@ -66,7 +66,8 @@ public class HighscoreManager : MonoBehaviour {
 			//Save highscore and initials
 			PlayerPrefs.SetInt(songName + "Highscore", m_score);
 			PlayerPrefs.SetString(songName + "Initials", m_currentName.ToString());
-			if(SceneLoader.i != null)
+			PlayerPrefs.Save();
+			if (SceneLoader.i != null)
 			{
 				SceneLoader.i.LoadScene(0);
 			}
